@@ -76,9 +76,11 @@ class MonthView extends React.Component {
   }
 
   render() {
-    let { date, localizer, className } = this.props,
-      month = localizer.visibleDays(date, localizer),
-      weeks = chunk(month, 7)
+    let { date, localizer, className, workdaysOnly } = this.props
+
+    let month = workdaysOnly ? month.filter(dates.isWorkDay) : dates.visibleDays(date, localizer)
+
+    weeks = chunk(month, workdaysOnly ? 5 : 7)
 
     this._weekCount = weeks.length
 
@@ -188,12 +190,17 @@ class MonthView extends React.Component {
   }
 
   renderHeaders(row) {
-    let { localizer, components } = this.props
+    let { localizer, components, workdaysOnly } = this.props
     let first = row[0]
     let last = row[row.length - 1]
     let HeaderComponent = components.header || Header
+    let days = localizer.range(first, last, 'day')
 
-    return localizer.range(first, last, 'day').map((day, idx) => (
+    if (workdaysOnly) {
+      days = days.filter((day) => localizer.isWorkDay(day))
+    }
+
+    return days.map((day, idx) => (
       <div key={'header_' + idx} className="rbc-header">
         <HeaderComponent
           date={day}
@@ -400,7 +407,7 @@ MonthView.propTypes = {
 
   popup: PropTypes.bool,
   handleDragStart: PropTypes.func,
-
+  workdaysOnly: PropTypes.bool,
   popupOffset: PropTypes.oneOfType([
     PropTypes.number,
     PropTypes.shape({
