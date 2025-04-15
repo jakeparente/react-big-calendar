@@ -13,7 +13,7 @@ if (b) {
 console.log(chalk.blue('[BEGIN BUILD]'))
 console.log(chalk.blue('Building js'))
 // build distributables
-await $`NODE_ENV=production rollup -c`
+await $`NODE_ENV=production rollup -c --verbose`
 console.log(chalk.blue(`Compiling 'lib' js files`))
 // build files used for overrides
 await $`NODE_ENV=production RBC_CJS_BUILD=true babel src --out-dir lib`

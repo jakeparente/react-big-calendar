@@ -7,7 +7,8 @@ import replace from '@rollup/plugin-replace'
 import clear from 'rollup-plugin-clear'
 // removed sizeSnapshot, as it is not compatible with ESM
 import { terser } from 'rollup-plugin-terser'
-import pkg from './package.json' with { type: 'json' }
+import fs from 'fs'
+const pkg = JSON.parse(fs.readFileSync('./package.json', 'utf-8'))
 
 const __dirname = url.fileURLToPath(new URL('.', import.meta.url))
 
