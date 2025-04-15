@@ -1,0 +1,17 @@
+export function monthsInYear(year: any): any[];
+export function firstVisibleDay(date: any, localizer: any): any;
+export function lastVisibleDay(date: any, localizer: any): any;
+export function visibleDays(date: any, localizer: any): any[];
+export function ceil(date: any, unit: any): any;
+export function range(start: any, end: any, unit?: string): any[];
+export function merge(date: any, time: any): any;
+export function eqTime(dateA: any, dateB: any): boolean;
+export function isJustDate(date: any): boolean;
+export function duration(start: any, end: any, unit: any, firstOfWeek: any): number;
+export function diff(dateA: any, dateB: any, unit: any): number;
+export function total(date: any, unit: any): number;
+export function week(date: any): number;
+export function today(): any;
+export function yesterday(): any;
+export function tomorrow(): any;
+export function isWorkDay(date: any): boolean;

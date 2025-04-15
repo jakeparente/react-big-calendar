@@ -42,7 +42,8 @@
     "prettier": "prettier '**/*js' '!lib/**' --write ",
     "storybook": "start-storybook -p 9002",
     "test": "yarn lint && NODE_ENV=test jest",
-    "tdd": "NODE_ENV=test jest --watch"
+    "tdd": "NODE_ENV=test jest --watch",
+    "build:types": "tsc --project tsconfig.json"
   },
   "peerDependencies": {
     "react": "^16.14.0 || ^17 || ^18 || ^19",
