@@ -5427,7 +5427,7 @@
     }
   }
 
-  var dates$1 = /*#__PURE__*/ Object.freeze({
+  var dates = /*#__PURE__*/ Object.freeze({
     __proto__: null,
     add: add,
     century: century,
@@ -5518,9 +5518,9 @@
     if (unit === 'day') unit = 'date'
     return Math.abs(
       // eslint-disable-next-line import/namespace
-      dates$1[unit](start, undefined, firstOfWeek) -
+      dates[unit](start, undefined, firstOfWeek) -
         // eslint-disable-next-line import/namespace
-        dates$1[unit](end, undefined, firstOfWeek)
+        dates[unit](end, undefined, firstOfWeek)
     )
   }
   function diff(dateA, dateB, unit) {
@@ -48025,11 +48025,8 @@
               date = _this$props4.date,
               localizer = _this$props4.localizer,
               className = _this$props4.className,
-              workdaysOnly = _this$props4.workdaysOnly
-            var month = workdaysOnly
-              ? month.filter(dates.isWorkDay)
-              : dates.visibleDays(date, localizer)
-            weeks = chunk_1(month, workdaysOnly ? 5 : 7)
+              month = localizer.visibleDays(date, localizer),
+              weeks = chunk_1(month, 7)
             this._weekCount = weeks.length
             return /*#__PURE__*/ React.createElement(
               'div',
@@ -48057,18 +48054,11 @@
           value: function renderHeaders(row) {
             var _this$props5 = this.props,
               localizer = _this$props5.localizer,
-              components = _this$props5.components,
-              workdaysOnly = _this$props5.workdaysOnly
+              components = _this$props5.components
             var first = row[0]
             var last = row[row.length - 1]
             var HeaderComponent = components.header || Header
-            var days = localizer.range(first, last, 'day')
-            if (workdaysOnly) {
-              days = days.filter(function (day) {
-                return localizer.isWorkDay(day)
-              })
-            }
-            return days.map(function (day, idx) {
+            return localizer.range(first, last, 'day').map(function (day, idx) {
               return /*#__PURE__*/ React.createElement(
                 'div',
                 {

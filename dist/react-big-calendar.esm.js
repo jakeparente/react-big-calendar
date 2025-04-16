@@ -20,7 +20,7 @@ import React, {
 import { uncontrollable } from 'uncontrollable'
 import PropTypes from 'prop-types'
 import invariant from 'invariant'
-import * as dates$1 from 'date-arithmetic'
+import * as dates from 'date-arithmetic'
 import {
   inRange as inRange$1,
   lt,
@@ -147,35 +147,35 @@ var MILLI = {
   day: 1000 * 60 * 60 * 24,
 }
 function firstVisibleDay(date, localizer) {
-  var firstOfMonth = dates$1.startOf(date, 'month')
-  return dates$1.startOf(firstOfMonth, 'week', localizer.startOfWeek())
+  var firstOfMonth = dates.startOf(date, 'month')
+  return dates.startOf(firstOfMonth, 'week', localizer.startOfWeek())
 }
 function lastVisibleDay(date, localizer) {
-  var endOfMonth = dates$1.endOf(date, 'month')
-  return dates$1.endOf(endOfMonth, 'week', localizer.startOfWeek())
+  var endOfMonth = dates.endOf(date, 'month')
+  return dates.endOf(endOfMonth, 'week', localizer.startOfWeek())
 }
 function visibleDays(date, localizer) {
   var current = firstVisibleDay(date, localizer),
     last = lastVisibleDay(date, localizer),
     days = []
-  while (dates$1.lte(current, last, 'day')) {
+  while (dates.lte(current, last, 'day')) {
     days.push(current)
-    current = dates$1.add(current, 1, 'day')
+    current = dates.add(current, 1, 'day')
   }
   return days
 }
 function ceil(date, unit) {
-  var floor = dates$1.startOf(date, unit)
-  return dates$1.eq(floor, date) ? floor : dates$1.add(floor, 1, unit)
+  var floor = dates.startOf(date, unit)
+  return dates.eq(floor, date) ? floor : dates.add(floor, 1, unit)
 }
 function range(start, end) {
   var unit =
     arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'day'
   var current = start,
     days = []
-  while (dates$1.lte(current, end, unit)) {
+  while (dates.lte(current, end, unit)) {
     days.push(current)
-    current = dates$1.add(current, 1, unit)
+    current = dates.add(current, 1, unit)
   }
   return days
 }
@@ -183,27 +183,27 @@ function merge(date, time) {
   if (time == null && date == null) return null
   if (time == null) time = new Date()
   if (date == null) date = new Date()
-  date = dates$1.startOf(date, 'day')
-  date = dates$1.hours(date, dates$1.hours(time))
-  date = dates$1.minutes(date, dates$1.minutes(time))
-  date = dates$1.seconds(date, dates$1.seconds(time))
-  return dates$1.milliseconds(date, dates$1.milliseconds(time))
+  date = dates.startOf(date, 'day')
+  date = dates.hours(date, dates.hours(time))
+  date = dates.minutes(date, dates.minutes(time))
+  date = dates.seconds(date, dates.seconds(time))
+  return dates.milliseconds(date, dates.milliseconds(time))
 }
 function isJustDate(date) {
   return (
-    dates$1.hours(date) === 0 &&
-    dates$1.minutes(date) === 0 &&
-    dates$1.seconds(date) === 0 &&
-    dates$1.milliseconds(date) === 0
+    dates.hours(date) === 0 &&
+    dates.minutes(date) === 0 &&
+    dates.seconds(date) === 0 &&
+    dates.milliseconds(date) === 0
   )
 }
 function duration(start, end, unit, firstOfWeek) {
   if (unit === 'day') unit = 'date'
   return Math.abs(
     // eslint-disable-next-line import/namespace
-    dates$1[unit](start, undefined, firstOfWeek) -
+    dates[unit](start, undefined, firstOfWeek) -
       // eslint-disable-next-line import/namespace
-      dates$1[unit](end, undefined, firstOfWeek)
+      dates[unit](end, undefined, firstOfWeek)
   )
 }
 function diff(dateA, dateB, unit) {
@@ -214,8 +214,8 @@ function diff(dateA, dateB, unit) {
   // since one day in the range may be shorter/longer by an hour
   return Math.round(
     Math.abs(
-      +dates$1.startOf(dateA, unit) / MILLI[unit] -
-        +dates$1.startOf(dateB, unit) / MILLI[unit]
+      +dates.startOf(dateA, unit) / MILLI[unit] -
+        +dates.startOf(dateB, unit) / MILLI[unit]
     )
   )
 }
@@ -2818,11 +2818,8 @@ var MonthView = /*#__PURE__*/ (function (_React$Component) {
             date = _this$props4.date,
             localizer = _this$props4.localizer,
             className = _this$props4.className,
-            workdaysOnly = _this$props4.workdaysOnly
-          var month = workdaysOnly
-            ? month.filter(dates.isWorkDay)
-            : dates.visibleDays(date, localizer)
-          weeks = chunk(month, workdaysOnly ? 5 : 7)
+            month = localizer.visibleDays(date, localizer),
+            weeks = chunk(month, 7)
           this._weekCount = weeks.length
           return /*#__PURE__*/ React.createElement(
             'div',
@@ -2850,18 +2847,11 @@ var MonthView = /*#__PURE__*/ (function (_React$Component) {
         value: function renderHeaders(row) {
           var _this$props5 = this.props,
             localizer = _this$props5.localizer,
-            components = _this$props5.components,
-            workdaysOnly = _this$props5.workdaysOnly
+            components = _this$props5.components
           var first = row[0]
           var last = row[row.length - 1]
           var HeaderComponent = components.header || Header
-          var days = localizer.range(first, last, 'day')
-          if (workdaysOnly) {
-            days = days.filter(function (day) {
-              return localizer.isWorkDay(day)
-            })
-          }
-          return days.map(function (day, idx) {
+          return localizer.range(first, last, 'day').map(function (day, idx) {
             return /*#__PURE__*/ React.createElement(
               'div',
               {
