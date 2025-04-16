@@ -2822,9 +2822,10 @@ var MonthView = /*#__PURE__*/ (function (_React$Component) {
             localizer = _this$props4.localizer,
             className = _this$props4.className,
             workdaysOnly = _this$props4.workdaysOnly
-          var month = workdaysOnly
-            ? month.filter(isWorkDay)
-            : visibleDays(date, localizer)
+          var month = visibleDays(date, localizer)
+          if (workdaysOnly) {
+            month = month.filter(isWorkDay)
+          }
           var weeks = chunk(month, workdaysOnly ? 5 : 7)
           this._weekCount = weeks.length
           return /*#__PURE__*/ React.createElement(

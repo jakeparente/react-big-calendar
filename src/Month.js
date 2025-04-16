@@ -79,10 +79,11 @@ class MonthView extends React.Component {
 
   render() {
     let { date, localizer, className, workdaysOnly } = this.props
+    let month = dates.visibleDays(date, localizer)
 
-    let month = workdaysOnly
-      ? month.filter(dates.isWorkDay)
-      : dates.visibleDays(date, localizer)
+    if (workdaysOnly) {
+      month = month.filter(dates.isWorkDay)
+    }
 
     let weeks = chunk(month, workdaysOnly ? 5 : 7)
 
