@@ -48068,9 +48068,7 @@
             var HeaderComponent = components.header || Header
             var days = localizer.range(first, last, 'day')
             if (workdaysOnly) {
-              days = days.filter(function (day) {
-                return localizer.isWorkDay(day)
-              })
+              days = days.filter(isWorkDay)
             }
             return days.map(function (day, idx) {
               return /*#__PURE__*/ React.createElement(

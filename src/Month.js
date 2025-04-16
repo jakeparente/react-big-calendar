@@ -202,7 +202,7 @@ class MonthView extends React.Component {
     let days = localizer.range(first, last, 'day')
 
     if (workdaysOnly) {
-      days = days.filter((day) => localizer.isWorkDay(day))
+      days = days.filter(dates.isWorkDay)
     }
 
     return days.map((day, idx) => (
