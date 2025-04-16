@@ -84,8 +84,9 @@ export default [
       format: 'esm',
       interop: 'auto',
     },
-    // prevent bundling all dependencies
-    external: (id) => !id.startsWith('.') && !id.startsWith('/'),
+    // Exclude only external dependencies like 'react' and 'react-dom'
+    external: (id) =>
+      ['react', 'react-dom'].includes(id) || id.startsWith('@babel/runtime'),
     plugins: [
       babel({
         ...babelOptions,
