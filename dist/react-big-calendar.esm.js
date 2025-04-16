@@ -219,6 +219,9 @@ function diff(dateA, dateB, unit) {
     )
   )
 }
+function isWorkDay(date) {
+  return date.getDay() !== 0 && date.getDay() !== 6
+}
 
 var localePropType = PropTypes.oneOfType([PropTypes.string, PropTypes.func])
 function _format(localizer, formatter, value, format, culture) {
@@ -2818,8 +2821,11 @@ var MonthView = /*#__PURE__*/ (function (_React$Component) {
             date = _this$props4.date,
             localizer = _this$props4.localizer,
             className = _this$props4.className,
-            month = localizer.visibleDays(date, localizer),
-            weeks = chunk(month, 7)
+            workdaysOnly = _this$props4.workdaysOnly
+          var month = workdaysOnly
+            ? month.filter(isWorkDay)
+            : visibleDays(date, localizer)
+          var weeks = chunk(month, workdaysOnly ? 5 : 7)
           this._weekCount = weeks.length
           return /*#__PURE__*/ React.createElement(
             'div',
@@ -2847,11 +2853,18 @@ var MonthView = /*#__PURE__*/ (function (_React$Component) {
         value: function renderHeaders(row) {
           var _this$props5 = this.props,
             localizer = _this$props5.localizer,
-            components = _this$props5.components
+            components = _this$props5.components,
+            workdaysOnly = _this$props5.workdaysOnly
           var first = row[0]
           var last = row[row.length - 1]
           var HeaderComponent = components.header || Header
-          return localizer.range(first, last, 'day').map(function (day, idx) {
+          var days = localizer.range(first, last, 'day')
+          if (workdaysOnly) {
+            days = days.filter(function (day) {
+              return localizer.isWorkDay(day)
+            })
+          }
+          return days.map(function (day, idx) {
             return /*#__PURE__*/ React.createElement(
               'div',
               {
