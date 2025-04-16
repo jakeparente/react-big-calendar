@@ -2,6 +2,8 @@ import React, { createRef } from 'react'
 import PropTypes from 'prop-types'
 import clsx from 'clsx'
 
+import * as dates from './utils/dates'
+
 import chunk from 'lodash/chunk'
 
 import { navigate, views } from './utils/constants'
@@ -78,9 +80,11 @@ class MonthView extends React.Component {
   render() {
     let { date, localizer, className, workdaysOnly } = this.props
 
-    let month = workdaysOnly ? month.filter(dates.isWorkDay) : dates.visibleDays(date, localizer)
+    let month = workdaysOnly
+      ? month.filter(dates.isWorkDay)
+      : dates.visibleDays(date, localizer)
 
-    weeks = chunk(month, workdaysOnly ? 5 : 7)
+    let weeks = chunk(month, workdaysOnly ? 5 : 7)
 
     this._weekCount = weeks.length
 
