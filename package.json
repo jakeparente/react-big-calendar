@@ -15,7 +15,7 @@
     "registry": "https://registry.npmjs.org/"
   },
   "license": "MIT",
-  "main": "lib/index.js",
+  "main": "dist/react-big-calendar.js",
   "module": "dist/react-big-calendar.esm.js",
   "style": "lib/css/react-big-calendar.css",
   "files": [
