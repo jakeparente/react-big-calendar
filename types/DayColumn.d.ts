@@ -8,7 +8,7 @@ declare class DayColumn {
     intervalTriggered: boolean;
     slotMetrics: {
         groups: any[];
-        update(args: any): any;
+        update(args: any): /*elided*/ any;
         dateIsInGroup(date: any, groupIndex: any): any;
         nextSlot(slot: any): any;
         closestSlotToPosition(percent: any): any;

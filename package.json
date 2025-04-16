@@ -18,6 +18,7 @@
   "main": "dist/react-big-calendar.js",
   "module": "dist/react-big-calendar.esm.js",
   "style": "lib/css/react-big-calendar.css",
+  "types": "types/index.d.ts",
   "files": [
     "lib/",
     "dist/",
@@ -108,6 +109,7 @@
     "sass": "1.57.1",
     "sass-loader": "^13.2.0",
     "semantic-release": "^20.0.2",
+    "typescript": "^5.8.3",
     "zx": "^7.1.1"
   },
   "dependencies": {

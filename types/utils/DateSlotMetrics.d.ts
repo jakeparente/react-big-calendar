@@ -5,7 +5,7 @@ export function getSlotMetrics(): import("memoize-one").MemoizedFn<(this: any, o
     extra: any[];
     range: any;
     slots: any;
-    clone(args: any): any;
+    clone(args: any): /*elided*/ any;
     getDateForSlot(slotNumber: any): any;
     getSlotForDate(date: any): any;
     getEventsForSlot(slot: any): any;

@@ -1,8 +1,14 @@
 export default VIEWS;
 declare const VIEWS: {
-    [x: string]: typeof Agenda | typeof Month | typeof Day | typeof WorkWeek;
+    [views.MONTH]: typeof Month;
+    [views.WEEK]: typeof Week;
+    [views.WORK_WEEK]: typeof WorkWeek;
+    [views.DAY]: typeof Day;
+    [views.AGENDA]: typeof Agenda;
 };
-import Agenda from './Agenda';
+import { views } from './utils/constants';
 import Month from './Month';
-import Day from './Day';
+import Week from './Week';
 import WorkWeek from './WorkWeek';
+import Day from './Day';
+import Agenda from './Agenda';
