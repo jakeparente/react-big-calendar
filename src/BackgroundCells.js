@@ -98,6 +98,8 @@ class BackgroundCells extends React.Component {
     }
 
     selector.on('selecting', (box) => {
+      console.log('would start selecting')
+      return
       let { range, rtl } = this.props
 
       let startIdx = -1
