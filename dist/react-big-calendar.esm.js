@@ -2750,6 +2750,9 @@ function noOverlap (_ref) {
   var availableEvents = styledEvents.filter(function (e) {
     return !(e.event && e.event.eventType && e.event.eventType === '_unavailable_');
   });
+  console.log({
+    availableEvents: availableEvents
+  });
 
   // Build friends/overlap graph only for available events
   for (var _i2 = 0; _i2 < availableEvents.length - 1; ++_i2) {

@@ -53,6 +53,8 @@ export default function ({
     )
   })
 
+  console.log({ availableEvents })
+
   // Build friends/overlap graph only for available events
   for (let i = 0; i < availableEvents.length - 1; ++i) {
     const se1 = availableEvents[i]
