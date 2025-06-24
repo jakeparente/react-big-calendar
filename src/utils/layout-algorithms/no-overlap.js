@@ -25,6 +25,8 @@ export default function ({
     accessors,
   })
 
+  console.log({ styledEvents })
+
   styledEvents.sort((a, b) => {
     a = a.style
     b = b.style

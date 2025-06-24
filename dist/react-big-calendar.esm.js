@@ -2730,6 +2730,9 @@ function noOverlap (_ref) {
     slotMetrics: slotMetrics,
     accessors: accessors
   });
+  console.log({
+    styledEvents: styledEvents
+  });
   styledEvents.sort(function (a, b) {
     a = a.style;
     b = b.style;
