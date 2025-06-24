@@ -2742,57 +2742,41 @@ function noOverlap (_ref) {
     delete styledEvents[i].idx;
     delete styledEvents[i].size;
   }
-
-  // Filter out unavailable events for overlap/positioning logic
-  var availableEvents = styledEvents.filter(function (e) {
-    return !(e.event && e.event.eventType && e.event.eventType === '_unavailable_');
-  });
-
-  // Build friends/overlap graph only for available events
-  for (var _i2 = 0; _i2 < availableEvents.length - 1; ++_i2) {
-    var se1 = availableEvents[_i2];
+  for (var _i2 = 0; _i2 < styledEvents.length - 1; ++_i2) {
+    var se1 = styledEvents[_i2];
     var y1 = se1.style.top;
     var y2 = se1.style.top + se1.style.height;
-    for (var j = _i2 + 1; j < availableEvents.length; ++j) {
-      var se2 = availableEvents[j];
+    for (var j = _i2 + 1; j < styledEvents.length; ++j) {
+      var se2 = styledEvents[j];
       var y3 = se2.style.top;
       var y4 = se2.style.top + se2.style.height;
       if (y3 >= y1 && y4 <= y2 || y4 > y1 && y4 <= y2 || y3 >= y1 && y3 < y2) {
+        // TODO : hashmap would be effective for performance
         se1.friends.push(se2);
         se2.friends.push(se1);
       }
     }
   }
-
-  // Assign idx for available events only
-  for (var _i4 = 0; _i4 < availableEvents.length; ++_i4) {
-    var se = availableEvents[_i4];
+  for (var _i4 = 0; _i4 < styledEvents.length; ++_i4) {
+    var se = styledEvents[_i4];
     var bitmap = [];
-    for (var _j2 = 0; _j2 < 100; ++_j2) bitmap.push(1);
-    for (var _j4 = 0; _j4 < se.friends.length; ++_j4) if (se.friends[_j4].idx !== undefined) bitmap[se.friends[_j4].idx] = 0;
+    for (var _j2 = 0; _j2 < 100; ++_j2) bitmap.push(1); // 1 means available
+
+    for (var _j4 = 0; _j4 < se.friends.length; ++_j4) if (se.friends[_j4].idx !== undefined) bitmap[se.friends[_j4].idx] = 0; // 0 means reserved
+
     se.idx = bitmap.indexOf(1);
   }
-
-  // Assign size for available events only
-  for (var _i6 = 0; _i6 < availableEvents.length; ++_i6) {
+  for (var _i6 = 0; _i6 < styledEvents.length; ++_i6) {
     var size = 0;
-    if (availableEvents[_i6].size) continue;
+    if (styledEvents[_i6].size) continue;
     var allFriends = [];
-    var maxIdx = getMaxIdxDFS(availableEvents[_i6], 0, allFriends);
+    var maxIdx = getMaxIdxDFS(styledEvents[_i6], 0, allFriends);
     size = 100 / (maxIdx + 1);
-    availableEvents[_i6].size = size;
+    styledEvents[_i6].size = size;
     for (var _j6 = 0; _j6 < allFriends.length; ++_j6) allFriends[_j6].size = size;
   }
-
-  // Apply left/width/xOffset for all events (including unavailable)
   for (var _i8 = 0; _i8 < styledEvents.length; ++_i8) {
     var e = styledEvents[_i8];
-    // If this is an unavailable event, don't assign idx/size based on overlap logic
-    if (e.event && e.event.eventType && e.event.eventType === '_unavailable_') {
-      // Render as normal, but don't set left/width/xOffset based on overlap
-      // You may want to set default width/left here if needed
-      continue;
-    }
     e.style.left = e.idx * e.size;
 
     // stretch to maximum
@@ -3355,11 +3339,6 @@ var ResourceHeader = function ResourceHeader(_ref) {
   var label = _ref.label;
   return /*#__PURE__*/React.createElement(React.Fragment, null, label);
 };
-ResourceHeader.propTypes = process.env.NODE_ENV !== "production" ? {
-  label: PropTypes.node,
-  index: PropTypes.number,
-  resource: PropTypes.object
-} : {};
 
 var TimeGridHeader = /*#__PURE__*/function (_React$Component) {
   function TimeGridHeader() {
