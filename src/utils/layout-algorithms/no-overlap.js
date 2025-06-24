@@ -42,13 +42,23 @@ export default function ({
     delete styledEvents[i].size
   }
 
-  for (let i = 0; i < styledEvents.length - 1; ++i) {
-    const se1 = styledEvents[i]
+  // Filter out unavailable events for overlap/positioning logic
+  const availableEvents = styledEvents.filter((e) => {
+    return !(
+      e.event &&
+      e.event.eventType &&
+      e.event.eventType === '_unavailable_'
+    )
+  })
+
+  // Build friends/overlap graph only for available events
+  for (let i = 0; i < availableEvents.length - 1; ++i) {
+    const se1 = availableEvents[i]
     const y1 = se1.style.top
     const y2 = se1.style.top + se1.style.height
 
-    for (let j = i + 1; j < styledEvents.length; ++j) {
-      const se2 = styledEvents[j]
+    for (let j = i + 1; j < availableEvents.length; ++j) {
+      const se2 = availableEvents[j]
       const y3 = se2.style.top
       const y4 = se2.style.top + se2.style.height
 
@@ -57,39 +67,42 @@ export default function ({
         (y4 > y1 && y4 <= y2) ||
         (y3 >= y1 && y3 < y2)
       ) {
-        // TODO : hashmap would be effective for performance
         se1.friends.push(se2)
         se2.friends.push(se1)
       }
     }
   }
 
-  for (let i = 0; i < styledEvents.length; ++i) {
-    const se = styledEvents[i]
+  // Assign idx for available events only
+  for (let i = 0; i < availableEvents.length; ++i) {
+    const se = availableEvents[i]
     const bitmap = []
-    for (let j = 0; j < 100; ++j) bitmap.push(1) // 1 means available
-
+    for (let j = 0; j < 100; ++j) bitmap.push(1)
     for (let j = 0; j < se.friends.length; ++j)
-      if (se.friends[j].idx !== undefined) bitmap[se.friends[j].idx] = 0 // 0 means reserved
-
+      if (se.friends[j].idx !== undefined) bitmap[se.friends[j].idx] = 0
     se.idx = bitmap.indexOf(1)
   }
 
-  for (let i = 0; i < styledEvents.length; ++i) {
+  // Assign size for available events only
+  for (let i = 0; i < availableEvents.length; ++i) {
     let size = 0
-
-    if (styledEvents[i].size) continue
-
+    if (availableEvents[i].size) continue
     const allFriends = []
-    const maxIdx = getMaxIdxDFS(styledEvents[i], 0, allFriends)
+    const maxIdx = getMaxIdxDFS(availableEvents[i], 0, allFriends)
     size = 100 / (maxIdx + 1)
-    styledEvents[i].size = size
-
+    availableEvents[i].size = size
     for (let j = 0; j < allFriends.length; ++j) allFriends[j].size = size
   }
 
+  // Apply left/width/xOffset for all events (including unavailable)
   for (let i = 0; i < styledEvents.length; ++i) {
     const e = styledEvents[i]
+    // If this is an unavailable event, don't assign idx/size based on overlap logic
+    if (e.event && e.event.eventType && e.event.eventType === '_unavailable_') {
+      // Render as normal, but don't set left/width/xOffset based on overlap
+      // You may want to set default width/left here if needed
+      continue
+    }
     e.style.left = e.idx * e.size
 
     // stretch to maximum
