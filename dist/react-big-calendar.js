@@ -41665,9 +41665,6 @@
       slotMetrics: slotMetrics,
       accessors: accessors
     });
-    console.log({
-      styledEvents: styledEvents
-    });
     styledEvents.sort(function (a, b) {
       a = a.style;
       b = b.style;
@@ -41684,9 +41681,6 @@
     // Filter out unavailable events for overlap/positioning logic
     var availableEvents = styledEvents.filter(function (e) {
       return !(e.event && e.event.eventType && e.event.eventType === '_unavailable_');
-    });
-    console.log({
-      availableEvents: availableEvents
     });
 
     // Build friends/overlap graph only for available events

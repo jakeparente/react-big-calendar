@@ -25,8 +25,6 @@ export default function ({
     accessors,
   })
 
-  console.log({ styledEvents })
-
   styledEvents.sort((a, b) => {
     a = a.style
     b = b.style
@@ -52,8 +50,6 @@ export default function ({
       e.event.eventType === '_unavailable_'
     )
   })
-
-  console.log({ availableEvents })
 
   // Build friends/overlap graph only for available events
   for (let i = 0; i < availableEvents.length - 1; ++i) {

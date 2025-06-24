@@ -2730,9 +2730,6 @@ function noOverlap (_ref) {
     slotMetrics: slotMetrics,
     accessors: accessors
   });
-  console.log({
-    styledEvents: styledEvents
-  });
   styledEvents.sort(function (a, b) {
     a = a.style;
     b = b.style;
@@ -2749,9 +2746,6 @@ function noOverlap (_ref) {
   // Filter out unavailable events for overlap/positioning logic
   var availableEvents = styledEvents.filter(function (e) {
     return !(e.event && e.event.eventType && e.event.eventType === '_unavailable_');
-  });
-  console.log({
-    availableEvents: availableEvents
   });
 
   // Build friends/overlap graph only for available events
@@ -3361,6 +3355,11 @@ var ResourceHeader = function ResourceHeader(_ref) {
   var label = _ref.label;
   return /*#__PURE__*/React.createElement(React.Fragment, null, label);
 };
+ResourceHeader.propTypes = process.env.NODE_ENV !== "production" ? {
+  label: PropTypes.node,
+  index: PropTypes.number,
+  resource: PropTypes.object
+} : {};
 
 var TimeGridHeader = /*#__PURE__*/function (_React$Component) {
   function TimeGridHeader() {
