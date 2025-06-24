@@ -41723,32 +41723,37 @@
     }
 
     // Apply left/width/xOffset for all events (including unavailable)
-    for (var _i8 = 0; _i8 < styledEvents.length; ++_i8) {
-      var e = styledEvents[_i8];
-      // If this is an unavailable event, don't assign idx/size based on overlap logic
-      if (e.event && e.event.className && e.event.className.includes('rbc-event-unavailable')) {
-        // Render as normal, but don't set left/width/xOffset based on overlap
-        // You may want to set default width/left here if needed
-        continue;
-      }
-      e.style.left = e.idx * e.size;
+    // for (let i = 0; i < styledEvents.length; ++i) {
+    //   const e = styledEvents[i]
+    //   // If this is an unavailable event, don't assign idx/size based on overlap logic
+    //   if (
+    //     e.event &&
+    //     e.event.className &&
+    //     e.event.className.includes('rbc-event-unavailable')
+    //   ) {
+    //     // Render as normal, but don't set left/width/xOffset based on overlap
+    //     // You may want to set default width/left here if needed
+    //     continue
+    //   }
+    //   e.style.left = e.idx * e.size
 
-      // stretch to maximum
-      var _maxIdx = 0;
-      for (var _j8 = 0; _j8 < e.friends.length; ++_j8) {
-        var idx = e.friends[_j8].idx;
-        _maxIdx = _maxIdx > idx ? _maxIdx : idx;
-      }
-      if (_maxIdx <= e.idx) e.size = 100 - e.idx * e.size;
+    //   // stretch to maximum
+    //   let maxIdx = 0
+    //   for (let j = 0; j < e.friends.length; ++j) {
+    //     const idx = e.friends[j].idx
+    //     maxIdx = maxIdx > idx ? maxIdx : idx
+    //   }
+    //   if (maxIdx <= e.idx) e.size = 100 - e.idx * e.size
 
-      // padding between events
-      // for this feature, `width` is not percentage based unit anymore
-      // it will be used with calc()
-      var padding = e.idx === 0 ? 0 : 3;
-      e.style.width = "calc(".concat(e.size, "% - ").concat(padding, "px)");
-      e.style.height = "calc(".concat(e.style.height, "% - 2px)");
-      e.style.xOffset = "calc(".concat(e.style.left, "% + ").concat(padding, "px)");
-    }
+    //   // padding between events
+    //   // for this feature, `width` is not percentage based unit anymore
+    //   // it will be used with calc()
+    //   const padding = e.idx === 0 ? 0 : 3
+    //   e.style.width = `calc(${e.size}% - ${padding}px)`
+    //   e.style.height = `calc(${e.style.height}% - 2px)`
+    //   e.style.xOffset = `calc(${e.style.left}% + ${padding}px)`
+    // }
+
     return styledEvents;
   }
 
