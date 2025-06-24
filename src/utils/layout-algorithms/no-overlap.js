@@ -48,8 +48,8 @@ export default function ({
   const availableEvents = styledEvents.filter((e) => {
     return !(
       e.event &&
-      e.event.className &&
-      e.event.className.includes('rbc-event-unavailable')
+      e.event.eventType &&
+      e.event.eventType === '_unavailable_'
     )
   })
 
@@ -100,11 +100,7 @@ export default function ({
   for (let i = 0; i < styledEvents.length; ++i) {
     const e = styledEvents[i]
     // If this is an unavailable event, don't assign idx/size based on overlap logic
-    if (
-      e.event &&
-      e.event.className &&
-      e.event.className.includes('rbc-event-unavailable')
-    ) {
+    if (e.event && e.event.eventType && e.event.eventType === '_unavailable_') {
       // Render as normal, but don't set left/width/xOffset based on overlap
       // You may want to set default width/left here if needed
       continue

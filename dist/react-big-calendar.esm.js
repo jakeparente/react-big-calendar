@@ -2748,7 +2748,7 @@ function noOverlap (_ref) {
 
   // Filter out unavailable events for overlap/positioning logic
   var availableEvents = styledEvents.filter(function (e) {
-    return !(e.event && e.event.className && e.event.className.includes('rbc-event-unavailable'));
+    return !(e.event && e.event.eventType && e.event.eventType === '_unavailable_');
   });
 
   // Build friends/overlap graph only for available events
@@ -2791,7 +2791,7 @@ function noOverlap (_ref) {
   for (var _i8 = 0; _i8 < styledEvents.length; ++_i8) {
     var e = styledEvents[_i8];
     // If this is an unavailable event, don't assign idx/size based on overlap logic
-    if (e.event && e.event.className && e.event.className.includes('rbc-event-unavailable')) {
+    if (e.event && e.event.eventType && e.event.eventType === '_unavailable_') {
       // Render as normal, but don't set left/width/xOffset based on overlap
       // You may want to set default width/left here if needed
       continue;
