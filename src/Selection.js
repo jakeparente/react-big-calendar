@@ -205,6 +205,45 @@ class Selection {
     })
     const removeTouchStartListener = addEventListener('touchstart', (e) => {
       this._removeInitialEventListener()
+      // Track initial touch position
+      let startCoords = getEventCoordinates(e)
+      let touchMoved = false
+      console.log('[Selection] touchstart', { startCoords, e })
+      const onTouchMove = (moveEvent) => {
+        const moveCoords = getEventCoordinates(moveEvent)
+        if (
+          Math.abs(moveCoords.pageX - startCoords.pageX) > clickTolerance ||
+          Math.abs(moveCoords.pageY - startCoords.pageY) > clickTolerance
+        ) {
+          touchMoved = true
+          console.log('[Selection] touchmove: movement detected', {
+            moveCoords,
+            startCoords,
+          })
+        }
+      }
+      const onTouchEnd = (endEvent) => {
+        removeTouchMove()
+        removeTouchEnd()
+        console.log('[Selection] touchend', { touchMoved, endEvent })
+        if (!touchMoved) {
+          // Minimal movement: treat as tap/click
+          console.log(
+            '[Selection] touchend: minimal movement, firing click logic',
+            { e }
+          )
+          this._handleInitialEvent(e)
+          this._handleClickEvent(e)
+        } else {
+          console.log(
+            '[Selection] touchend: movement detected, not firing click',
+            { e }
+          )
+        }
+      }
+      const removeTouchMove = addEventListener('touchmove', onTouchMove)
+      const removeTouchEnd = addEventListener('touchend', onTouchEnd)
+      // fallback to long press logic
       this._removeInitialEventListener = this._addLongPressListener(
         this._handleInitialEvent,
         e
