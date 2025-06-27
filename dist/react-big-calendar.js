@@ -38378,6 +38378,7 @@
           clientY: clientY
         });
         if (result === false) return;
+        console.log('Selection] _handleInitialEvent', e.type);
         switch (e.type) {
           case 'mousedown':
             this._removeEndListener = addEventListener('mouseup', this._handleTerminatingEvent);
@@ -38427,6 +38428,11 @@
         if (e.key === 'Escape' || !isWithinValidContainer) {
           return this.emit('reset');
         }
+        console.log('[Selection] _handleTerminatingEvent', {
+          selecting: selecting,
+          inRoot: inRoot,
+          isWithinValidContainer: isWithinValidContainer
+        });
         if (!selecting && inRoot) {
           return this._handleClickEvent(e);
         }

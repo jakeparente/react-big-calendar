@@ -293,6 +293,7 @@ class Selection {
 
     if (result === false) return
 
+    console.log('Selection] _handleInitialEvent', e.type)
     switch (e.type) {
       case 'mousedown':
         this._removeEndListener = addEventListener(
@@ -360,6 +361,12 @@ class Selection {
     if (e.key === 'Escape' || !isWithinValidContainer) {
       return this.emit('reset')
     }
+
+    console.log('[Selection] _handleTerminatingEvent', {
+      selecting,
+      inRoot,
+      isWithinValidContainer,
+    })
 
     if (!selecting && inRoot) {
       return this._handleClickEvent(e)
