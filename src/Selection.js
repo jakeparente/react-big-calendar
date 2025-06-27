@@ -342,7 +342,11 @@ class Selection {
     const selecting = this.selecting
     const bounds = this._selectRect
     // If it's not in selecting state, it's a click event
-    if (!selecting && e.type.includes('key')) {
+    if (!selecting && e.type && e.type.includes('key')) {
+      console.log(
+        '[Selection] _handleTerminatingEvent: using _initialEvent for key event',
+        { selecting, e }
+      )
       e = this._initialEvent
     }
 
@@ -353,12 +357,19 @@ class Selection {
     this._selectRect = null
     this._initialEvent = null
     this._initialEventData = null
-    if (!e) return
+    if (!e) {
+      console.log('[Selection] _handleTerminatingEvent: no event, returning')
+      return
+    }
 
     let inRoot = !this.container || contains(this.container(), e.target)
     let isWithinValidContainer = this._isWithinValidContainer(e)
 
     if (e.key === 'Escape' || !isWithinValidContainer) {
+      console.log(
+        '[Selection] _handleTerminatingEvent: reset due to Escape or invalid container',
+        { e, isWithinValidContainer }
+      )
       return this.emit('reset')
     }
 
@@ -366,27 +377,56 @@ class Selection {
       selecting,
       inRoot,
       isWithinValidContainer,
+      eventType: e.type,
+      event: e,
+      bounds,
+      _selectRect: this._selectRect,
+      _initialEvent: this._initialEvent,
+      _initialEventData: this._initialEventData,
     })
 
     if (!selecting && inRoot) {
+      console.log(
+        '[Selection] _handleTerminatingEvent: calling _handleClickEvent',
+        { e }
+      )
       return this._handleClickEvent(e)
     }
 
     // User drag-clicked in the Selectable area
-    if (selecting) return this.emit('select', bounds)
+    if (selecting) {
+      console.log('[Selection] _handleTerminatingEvent: emitting select', {
+        bounds,
+      })
+      return this.emit('select', bounds)
+    }
 
+    console.log('[Selection] _handleTerminatingEvent: emitting reset')
     return this.emit('reset')
   }
 
   _handleClickEvent(e) {
     const { pageX, pageY, clientX, clientY } = getEventCoordinates(e)
     const now = new Date().getTime()
+    console.log('[Selection] _handleClickEvent', {
+      pageX,
+      pageY,
+      clientX,
+      clientY,
+      now,
+      lastClickData: this._lastClickData,
+      e,
+    })
 
     if (
       this._lastClickData &&
       now - this._lastClickData.timestamp < clickInterval
     ) {
       // Double click event
+      console.log('[Selection] _handleClickEvent: doubleClick', {
+        now,
+        lastClickData: this._lastClickData,
+      })
       this._lastClickData = null
       return this.emit('doubleClick', {
         x: pageX,
@@ -400,6 +440,7 @@ class Selection {
     this._lastClickData = {
       timestamp: now,
     }
+    console.log('[Selection] _handleClickEvent: click', { now })
     return this.emit('click', {
       x: pageX,
       y: pageY,
@@ -410,6 +451,13 @@ class Selection {
 
   _handleMoveEvent(e) {
     if (this._initialEventData === null || this.isDetached) {
+      console.log(
+        '[Selection] _handleMoveEvent: no initialEventData or detached',
+        {
+          _initialEventData: this._initialEventData,
+          isDetached: this.isDetached,
+        }
+      )
       return
     }
 
@@ -425,10 +473,19 @@ class Selection {
     // Prevent emitting selectStart event until mouse is moved.
     // in Chrome on Windows, mouseMove event may be fired just after mouseDown event.
     if (click && !old && !(w || h)) {
+      console.log('[Selection] _handleMoveEvent: click detected, not moving', {
+        click,
+        old,
+        w,
+        h,
+      })
       return
     }
 
     if (!old && !click) {
+      console.log('[Selection] _handleMoveEvent: emitting selectStart', {
+        _initialEventData: this._initialEventData,
+      })
       this.emit('selectStart', this._initialEventData)
     }
 
@@ -442,6 +499,9 @@ class Selection {
         right: left + w,
         bottom: top + h,
       }
+      console.log('[Selection] _handleMoveEvent: emitting selecting', {
+        _selectRect: this._selectRect,
+      })
       this.emit('selecting', this._selectRect)
     }
 
@@ -454,11 +514,12 @@ class Selection {
 
   isClick(pageX, pageY) {
     let { x, y, isTouch } = this._initialEventData
-    return (
+    const result =
       !isTouch &&
       Math.abs(pageX - x) <= clickTolerance &&
       Math.abs(pageY - y) <= clickTolerance
-    )
+    console.log('[Selection] isClick', { pageX, pageY, x, y, isTouch, result })
+    return result
   }
 }
 
