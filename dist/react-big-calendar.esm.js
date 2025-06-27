@@ -1323,13 +1323,29 @@ var BackgroundCells = /*#__PURE__*/function (_React$Component) {
         longPressThreshold: this.props.longPressThreshold
       });
       var selectorClicksHandler = function selectorClicksHandler(point, actionType) {
+        console.log('[BackgroundCells] selectorClicksHandler', {
+          point: point,
+          actionType: actionType
+        });
         if (!isEvent(node, point) && !isShowMore(node, point)) {
           var rowBox = getBoundsForNode(node);
           var _this2$props = _this2.props,
             range = _this2$props.range,
             rtl = _this2$props.rtl;
+          console.log('[BackgroundCells] pointInBox', {
+            rowBox: rowBox,
+            point: point,
+            inBox: pointInBox(rowBox, point)
+          });
           if (pointInBox(rowBox, point)) {
             var currentCell = getSlotAtX(rowBox, point.x, rtl, range.length);
+            console.log('[BackgroundCells] getSlotAtX', {
+              currentCell: currentCell,
+              rowBox: rowBox,
+              x: point.x,
+              rtl: rtl,
+              slots: range.length
+            });
             _this2._selectSlot({
               startIdx: currentCell,
               endIdx: currentCell,
@@ -1344,7 +1360,6 @@ var BackgroundCells = /*#__PURE__*/function (_React$Component) {
         });
       };
       selector.on('selecting', function (box) {
-        console.log('would start selecting');
         return;
       });
       selector.on('beforeSelect', function (box) {
@@ -1352,12 +1367,22 @@ var BackgroundCells = /*#__PURE__*/function (_React$Component) {
         return !isEvent(_this2.containerRef.current, box);
       });
       selector.on('click', function (point) {
-        return selectorClicksHandler(point, 'click');
+        console.log('[BackgroundCells] click event', {
+          point: point
+        });
+        selectorClicksHandler(point, 'click');
       });
       selector.on('doubleClick', function (point) {
-        return selectorClicksHandler(point, 'doubleClick');
+        console.log('[BackgroundCells] doubleClick event', {
+          point: point
+        });
+        selectorClicksHandler(point, 'doubleClick');
       });
       selector.on('select', function (bounds) {
+        console.log('[BackgroundCells] select event', {
+          bounds: bounds,
+          state: _this2.state
+        });
         _this2._selectSlot(_objectSpread(_objectSpread({}, _this2.state), {}, {
           action: 'select',
           bounds: bounds
@@ -2324,22 +2349,7 @@ var MonthView = /*#__PURE__*/function (_React$Component) {
   }, {
     key: "selectDates",
     value: function selectDates(slotInfo) {
-      var slots = this._pendingSelection.slice();
-      this._pendingSelection = [];
-      slots.sort(function (a, b) {
-        return +a - +b;
-      });
-      var start = new Date(slots[0]);
-      var end = new Date(slots[slots.length - 1]);
-      end.setDate(slots[slots.length - 1].getDate() + 1);
-      notify(this.props.onSelectSlot, {
-        slots: slots,
-        start: start,
-        end: end,
-        action: slotInfo.action,
-        bounds: slotInfo.bounds,
-        box: slotInfo.box
-      });
+      return;
     }
   }, {
     key: "clearSelection",

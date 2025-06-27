@@ -77,13 +77,27 @@ class BackgroundCells extends React.Component {
     }))
 
     let selectorClicksHandler = (point, actionType) => {
+      console.log('[BackgroundCells] selectorClicksHandler', {
+        point,
+        actionType,
+      })
       if (!isEvent(node, point) && !isShowMore(node, point)) {
         let rowBox = getBoundsForNode(node)
         let { range, rtl } = this.props
-
+        console.log('[BackgroundCells] pointInBox', {
+          rowBox,
+          point,
+          inBox: pointInBox(rowBox, point),
+        })
         if (pointInBox(rowBox, point)) {
           let currentCell = getSlotAtX(rowBox, point.x, rtl, range.length)
-
+          console.log('[BackgroundCells] getSlotAtX', {
+            currentCell,
+            rowBox,
+            x: point.x,
+            rtl,
+            slots: range.length,
+          })
           this._selectSlot({
             startIdx: currentCell,
             endIdx: currentCell,
@@ -92,13 +106,11 @@ class BackgroundCells extends React.Component {
           })
         }
       }
-
       this._initial = {}
       this.setState({ selecting: false })
     }
 
     selector.on('selecting', (box) => {
-      console.log('would start selecting')
       return
       let { range, rtl } = this.props
 
@@ -133,13 +145,21 @@ class BackgroundCells extends React.Component {
       return !isEvent(this.containerRef.current, box)
     })
 
-    selector.on('click', (point) => selectorClicksHandler(point, 'click'))
+    selector.on('click', (point) => {
+      console.log('[BackgroundCells] click event', { point })
+      selectorClicksHandler(point, 'click')
+    })
 
-    selector.on('doubleClick', (point) =>
+    selector.on('doubleClick', (point) => {
+      console.log('[BackgroundCells] doubleClick event', { point })
       selectorClicksHandler(point, 'doubleClick')
-    )
+    })
 
     selector.on('select', (bounds) => {
+      console.log('[BackgroundCells] select event', {
+        bounds,
+        state: this.state,
+      })
       this._selectSlot({ ...this.state, action: 'select', bounds })
       this._initial = {}
       this.setState({ selecting: false })

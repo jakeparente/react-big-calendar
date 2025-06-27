@@ -348,6 +348,7 @@ class MonthView extends React.Component {
   }
 
   selectDates(slotInfo) {
+    return
     let slots = this._pendingSelection.slice()
 
     this._pendingSelection = []
