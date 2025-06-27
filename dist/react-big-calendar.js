@@ -38338,6 +38338,9 @@
       key: "_handleInitialEvent",
       value: function _handleInitialEvent(e) {
         this._initialEvent = e;
+        console.log('[Selection] _handleInitialEvent', {
+          type: e.type
+        });
         if (this.isDetached) {
           return;
         }
