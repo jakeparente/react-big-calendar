@@ -533,6 +533,58 @@ function pointInBox(box, _ref) {
     y = _ref.y;
   return y >= box.top && y <= box.bottom && x >= box.left && x <= box.right;
 }
+function dateCellSelection(start, rowBox, box, slots, rtl) {
+  var startIdx = -1;
+  var endIdx = -1;
+  var lastSlotIdx = slots - 1;
+  var cellWidth = slotWidth(rowBox, slots);
+
+  // cell under the mouse
+  var currentSlot = getSlotAtX(rowBox, box.x, rtl, slots);
+
+  // Identify row as either the initial row
+  // or the row under the current mouse point
+  var isCurrentRow = rowBox.top < box.y && rowBox.bottom > box.y;
+  var isStartRow = rowBox.top < start.y && rowBox.bottom > start.y;
+
+  // this row's position relative to the start point
+  var isAboveStart = start.y > rowBox.bottom;
+  var isBelowStart = rowBox.top > start.y;
+  var isBetween = box.top < rowBox.top && box.bottom > rowBox.bottom;
+
+  // this row is between the current and start rows, so entirely selected
+  if (isBetween) {
+    startIdx = 0;
+    endIdx = lastSlotIdx;
+  }
+  if (isCurrentRow) {
+    if (isBelowStart) {
+      startIdx = 0;
+      endIdx = currentSlot;
+    } else if (isAboveStart) {
+      startIdx = currentSlot;
+      endIdx = lastSlotIdx;
+    }
+  }
+  if (isStartRow) {
+    // select the cell under the initial point
+    startIdx = endIdx = rtl ? lastSlotIdx - Math.floor((start.x - rowBox.left) / cellWidth) : Math.floor((start.x - rowBox.left) / cellWidth);
+    if (isCurrentRow) {
+      if (currentSlot < startIdx) startIdx = currentSlot;else endIdx = currentSlot; //select current range
+    } else if (start.y < box.y) {
+      // the current row is below start row
+      // select cells to the right of the start cell
+      endIdx = lastSlotIdx;
+    } else {
+      // select cells to the left of the start cell
+      startIdx = 0;
+    }
+  }
+  return {
+    startIdx: startIdx,
+    endIdx: endIdx
+  };
+}
 
 /**
  * Changes to react-overlays cause issue with auto positioning,
@@ -954,6 +1006,46 @@ var Selection = /*#__PURE__*/function () {
       });
       var removeTouchStartListener = addEventListener('touchstart', function (e) {
         _this2._removeInitialEventListener();
+        // Track initial touch position
+        var startCoords = getEventCoordinates(e);
+        var touchMoved = false;
+        console.log('[Selection] touchstart', {
+          startCoords: startCoords,
+          e: e
+        });
+        var onTouchMove = function onTouchMove(moveEvent) {
+          var moveCoords = getEventCoordinates(moveEvent);
+          if (Math.abs(moveCoords.pageX - startCoords.pageX) > clickTolerance || Math.abs(moveCoords.pageY - startCoords.pageY) > clickTolerance) {
+            touchMoved = true;
+            console.log('[Selection] touchmove: movement detected', {
+              moveCoords: moveCoords,
+              startCoords: startCoords
+            });
+          }
+        };
+        var onTouchEnd = function onTouchEnd(endEvent) {
+          removeTouchMove();
+          removeTouchEnd();
+          console.log('[Selection] touchend', {
+            touchMoved: touchMoved,
+            endEvent: endEvent
+          });
+          if (!touchMoved) {
+            // Minimal movement: treat as tap/click
+            console.log('[Selection] touchend: minimal movement, firing click logic', {
+              e: e
+            });
+            _this2._handleInitialEvent(e);
+            _this2._handleClickEvent(e);
+          } else {
+            console.log('[Selection] touchend: movement detected, not firing click', {
+              e: e
+            });
+          }
+        };
+        var removeTouchMove = addEventListener('touchmove', onTouchMove);
+        var removeTouchEnd = addEventListener('touchend', onTouchEnd);
+        // fallback to long press logic
         _this2._removeInitialEventListener = _this2._addLongPressListener(_this2._handleInitialEvent, e);
       });
       this._removeInitialEventListener = function () {
@@ -1436,9 +1528,40 @@ var BackgroundCells = /*#__PURE__*/function (_React$Component) {
         });
       };
       selector.on('selecting', function (box) {
-        return;
+        console.log({
+          '[BackgroundCells] selecting event': {
+            box: box
+          }
+        });
+        if (_this2.props.selectable !== 'ignoreEvents') return;
+        var _this2$props2 = _this2.props,
+          range = _this2$props2.range,
+          rtl = _this2$props2.rtl;
+        var startIdx = -1;
+        var endIdx = -1;
+        if (!_this2.state.selecting) {
+          notify(_this2.props.onSelectStart, [box]);
+          _this2._initial = {
+            x: box.x,
+            y: box.y
+          };
+        }
+        if (selector.isSelected(node)) {
+          var nodeBox = getBoundsForNode(node);
+          var _dateCellSelection = dateCellSelection(_this2._initial, nodeBox, box, range.length, rtl);
+          startIdx = _dateCellSelection.startIdx;
+          endIdx = _dateCellSelection.endIdx;
+        }
+        _this2.setState({
+          selecting: true,
+          startIdx: startIdx,
+          endIdx: endIdx
+        });
       });
       selector.on('beforeSelect', function (box) {
+        console.log('[BackgroundCells] beforeSelect event', {
+          box: box
+        });
         if (_this2.props.selectable !== 'ignoreEvents') return;
         return !isEvent(_this2.containerRef.current, box);
       });
