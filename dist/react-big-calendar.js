@@ -40883,7 +40883,22 @@
     }, {
       key: "selectDates",
       value: function selectDates(slotInfo) {
-        return;
+        var slots = this._pendingSelection.slice();
+        this._pendingSelection = [];
+        slots.sort(function (a, b) {
+          return +a - +b;
+        });
+        var start = new Date(slots[0]);
+        var end = new Date(slots[slots.length - 1]);
+        end.setDate(slots[slots.length - 1].getDate() + 1);
+        notify(this.props.onSelectSlot, {
+          slots: slots,
+          start: start,
+          end: end,
+          action: slotInfo.action,
+          bounds: slotInfo.bounds,
+          box: slotInfo.box
+        });
       }
     }, {
       key: "clearSelection",
