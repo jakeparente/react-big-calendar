@@ -1602,14 +1602,24 @@ var BackgroundCells = /*#__PURE__*/function (_React$Component) {
         action = _ref.action,
         bounds = _ref.bounds,
         box = _ref.box;
-      if (endIdx !== -1 && startIdx !== -1) this.props.onSelectSlot && this.props.onSelectSlot({
-        start: startIdx,
-        end: endIdx,
-        action: action,
-        bounds: bounds,
-        box: box,
-        resourceId: this.props.resourceId
-      });
+      if (endIdx !== -1 && startIdx !== -1) {
+        console.log('[BackgroundCells] _selectSlot', {
+          startIdx: startIdx,
+          endIdx: endIdx,
+          action: action,
+          bounds: bounds,
+          box: box,
+          func: this.props.onSelectSlot
+        });
+        this.props.onSelectSlot && this.props.onSelectSlot({
+          start: startIdx,
+          end: endIdx,
+          action: action,
+          bounds: bounds,
+          box: box,
+          resourceId: this.props.resourceId
+        });
+      }
     }
   }]);
 }(React.Component);
@@ -2036,6 +2046,10 @@ var DateContentRow = /*#__PURE__*/function (_React$Component) {
       var _this$props = _this.props,
         range = _this$props.range,
         onSelectSlot = _this$props.onSelectSlot;
+      console.log('[DateContentRow] handleSelectSlot', {
+        range: range,
+        slot: slot
+      });
       onSelectSlot(range.slice(slot.start, slot.end + 1), slot);
     };
     _this.handleShowMore = function (slot, target) {
