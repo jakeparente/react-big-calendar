@@ -38350,38 +38350,19 @@
           // Track initial touch position
           var startCoords = getEventCoordinates(e);
           var touchMoved = false;
-          console.log('[Selection] touchstart', {
-            startCoords: startCoords,
-            e: e
-          });
           var onTouchMove = function onTouchMove(moveEvent) {
             var moveCoords = getEventCoordinates(moveEvent);
             if (Math.abs(moveCoords.pageX - startCoords.pageX) > clickTolerance || Math.abs(moveCoords.pageY - startCoords.pageY) > clickTolerance) {
               touchMoved = true;
-              console.log('[Selection] touchmove: movement detected', {
-                moveCoords: moveCoords,
-                startCoords: startCoords
-              });
             }
           };
           var onTouchEnd = function onTouchEnd(endEvent) {
             removeTouchMove();
             removeTouchEnd();
-            console.log('[Selection] touchend', {
-              touchMoved: touchMoved,
-              endEvent: endEvent
-            });
             if (!touchMoved) {
               // Minimal movement: treat as tap/click
-              console.log('[Selection] touchend: minimal movement, firing click logic', {
-                e: e
-              });
               _this2._handleInitialEvent(e);
               _this2._handleClickEvent(e);
-            } else {
-              console.log('[Selection] touchend: movement detected, not firing click', {
-                e: e
-              });
             }
           };
           var removeTouchMove = addEventListener('touchmove', onTouchMove);
@@ -38430,9 +38411,6 @@
       key: "_handleInitialEvent",
       value: function _handleInitialEvent(e) {
         this._initialEvent = e;
-        console.log('[Selection] _handleInitialEvent', {
-          type: e.type
-        });
         if (this.isDetached) {
           return;
         }
@@ -38473,7 +38451,6 @@
           clientY: clientY
         });
         if (result === false) return;
-        console.log('Selection] _handleInitialEvent', e.type);
         switch (e.type) {
           case 'mousedown':
             this._removeEndListener = addEventListener('mouseup', this._handleTerminatingEvent);
@@ -38509,10 +38486,6 @@
         var bounds = this._selectRect;
         // If it's not in selecting state, it's a click event
         if (!selecting && e.type && e.type.includes('key')) {
-          console.log('[Selection] _handleTerminatingEvent: using _initialEvent for key event', {
-            selecting: selecting,
-            e: e
-          });
           e = this._initialEvent;
         }
         this.selecting = false;
@@ -38522,44 +38495,21 @@
         this._initialEvent = null;
         this._initialEventData = null;
         if (!e) {
-          console.log('[Selection] _handleTerminatingEvent: no event, returning');
           return;
         }
         var inRoot = !this.container || contains$1(this.container(), e.target);
         var isWithinValidContainer = this._isWithinValidContainer(e);
         if (e.key === 'Escape' || !isWithinValidContainer) {
-          console.log('[Selection] _handleTerminatingEvent: reset due to Escape or invalid container', {
-            e: e,
-            isWithinValidContainer: isWithinValidContainer
-          });
           return this.emit('reset');
         }
-        console.log('[Selection] _handleTerminatingEvent', {
-          selecting: selecting,
-          inRoot: inRoot,
-          isWithinValidContainer: isWithinValidContainer,
-          eventType: e.type,
-          event: e,
-          bounds: bounds,
-          _selectRect: this._selectRect,
-          _initialEvent: this._initialEvent,
-          _initialEventData: this._initialEventData
-        });
         if (!selecting && inRoot) {
-          console.log('[Selection] _handleTerminatingEvent: calling _handleClickEvent', {
-            e: e
-          });
           return this._handleClickEvent(e);
         }
 
         // User drag-clicked in the Selectable area
         if (selecting) {
-          console.log('[Selection] _handleTerminatingEvent: emitting select', {
-            bounds: bounds
-          });
           return this.emit('select', bounds);
         }
-        console.log('[Selection] _handleTerminatingEvent: emitting reset');
         return this.emit('reset');
       }
     }, {
@@ -38571,21 +38521,8 @@
           clientX = _getEventCoordinates4.clientX,
           clientY = _getEventCoordinates4.clientY;
         var now = new Date().getTime();
-        console.log('[Selection] _handleClickEvent', {
-          pageX: pageX,
-          pageY: pageY,
-          clientX: clientX,
-          clientY: clientY,
-          now: now,
-          lastClickData: this._lastClickData,
-          e: e
-        });
         if (this._lastClickData && now - this._lastClickData.timestamp < clickInterval) {
           // Double click event
-          console.log('[Selection] _handleClickEvent: doubleClick', {
-            now: now,
-            lastClickData: this._lastClickData
-          });
           this._lastClickData = null;
           return this.emit('doubleClick', {
             x: pageX,
@@ -38599,9 +38536,6 @@
         this._lastClickData = {
           timestamp: now
         };
-        console.log('[Selection] _handleClickEvent: click', {
-          now: now
-        });
         return this.emit('click', {
           x: pageX,
           y: pageY,
@@ -38613,10 +38547,6 @@
       key: "_handleMoveEvent",
       value: function _handleMoveEvent(e) {
         if (this._initialEventData === null || this.isDetached) {
-          console.log('[Selection] _handleMoveEvent: no initialEventData or detached', {
-            _initialEventData: this._initialEventData,
-            isDetached: this.isDetached
-          });
           return;
         }
         var _this$_initialEventDa = this._initialEventData,
@@ -38634,18 +38564,9 @@
         // Prevent emitting selectStart event until mouse is moved.
         // in Chrome on Windows, mouseMove event may be fired just after mouseDown event.
         if (click && !old && !(w || h)) {
-          console.log('[Selection] _handleMoveEvent: click detected, not moving', {
-            click: click,
-            old: old,
-            w: w,
-            h: h
-          });
           return;
         }
         if (!old && !click) {
-          console.log('[Selection] _handleMoveEvent: emitting selectStart', {
-            _initialEventData: this._initialEventData
-          });
           this.emit('selectStart', this._initialEventData);
         }
         if (!click) {
@@ -38658,9 +38579,6 @@
             right: left + w,
             bottom: top + h
           };
-          console.log('[Selection] _handleMoveEvent: emitting selecting', {
-            _selectRect: this._selectRect
-          });
           this.emit('selecting', this._selectRect);
         }
         e.preventDefault();
@@ -38678,14 +38596,6 @@
           y = _this$_initialEventDa2.y,
           isTouch = _this$_initialEventDa2.isTouch;
         var result = !isTouch && Math.abs(pageX - x) <= clickTolerance && Math.abs(pageY - y) <= clickTolerance;
-        console.log('[Selection] isClick', {
-          pageX: pageX,
-          pageY: pageY,
-          x: x,
-          y: y,
-          isTouch: isTouch,
-          result: result
-        });
         return result;
       }
     }]);
@@ -38832,29 +38742,13 @@
           longPressThreshold: this.props.longPressThreshold
         });
         var selectorClicksHandler = function selectorClicksHandler(point, actionType) {
-          console.log('[BackgroundCells] selectorClicksHandler', {
-            point: point,
-            actionType: actionType
-          });
           if (!isEvent(node, point) && !isShowMore(node, point)) {
             var rowBox = getBoundsForNode(node);
             var _this2$props = _this2.props,
               range = _this2$props.range,
               rtl = _this2$props.rtl;
-            console.log('[BackgroundCells] pointInBox', {
-              rowBox: rowBox,
-              point: point,
-              inBox: pointInBox(rowBox, point)
-            });
             if (pointInBox(rowBox, point)) {
               var currentCell = getSlotAtX(rowBox, point.x, rtl, range.length);
-              console.log('[BackgroundCells] getSlotAtX', {
-                currentCell: currentCell,
-                rowBox: rowBox,
-                x: point.x,
-                rtl: rtl,
-                slots: range.length
-              });
               _this2._selectSlot({
                 startIdx: currentCell,
                 endIdx: currentCell,
@@ -38894,29 +38788,16 @@
           });
         });
         selector.on('beforeSelect', function (box) {
-          console.log('[BackgroundCells] beforeSelect event', {
-            box: box
-          });
           if (_this2.props.selectable !== 'ignoreEvents') return;
           return !isEvent(_this2.containerRef.current, box);
         });
         selector.on('click', function (point) {
-          console.log('[BackgroundCells] click event', {
-            point: point
-          });
           selectorClicksHandler(point, 'click');
         });
         selector.on('doubleClick', function (point) {
-          console.log('[BackgroundCells] doubleClick event', {
-            point: point
-          });
           selectorClicksHandler(point, 'doubleClick');
         });
         selector.on('select', function (bounds) {
-          console.log('[BackgroundCells] select event', {
-            bounds: bounds,
-            state: _this2.state
-          });
           _this2._selectSlot(_objectSpread2(_objectSpread2({}, _this2.state), {}, {
             action: 'select',
             bounds: bounds
@@ -38944,14 +38825,6 @@
           bounds = _ref.bounds,
           box = _ref.box;
         if (endIdx !== -1 && startIdx !== -1) {
-          console.log('[BackgroundCells] _selectSlot', {
-            startIdx: startIdx,
-            endIdx: endIdx,
-            action: action,
-            bounds: bounds,
-            box: box,
-            func: this.props.onSelectSlot
-          });
           this.props.onSelectSlot && this.props.onSelectSlot({
             start: startIdx,
             end: endIdx,
@@ -40373,10 +40246,6 @@
         var _this$props = _this.props,
           range = _this$props.range,
           onSelectSlot = _this$props.onSelectSlot;
-        console.log('[DateContentRow] handleSelectSlot', {
-          range: range,
-          slot: slot
-        });
         onSelectSlot(range.slice(slot.start, slot.end + 1), slot);
       };
       _this.handleShowMore = function (slot, target) {

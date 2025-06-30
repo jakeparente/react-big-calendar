@@ -24,10 +24,7 @@ class DateContentRow extends React.Component {
 
   handleSelectSlot = (slot) => {
     const { range, onSelectSlot } = this.props
-    console.log('[DateContentRow] handleSelectSlot', {
-      range,
-      slot,
-    })
+
     onSelectSlot(range.slice(slot.start, slot.end + 1), slot)
   }
 
