@@ -38869,12 +38869,6 @@
           });
         };
         selector.on('selecting', function (box) {
-          console.log({
-            '[BackgroundCells] selecting event': {
-              box: box
-            }
-          });
-          if (_this2.props.selectable !== 'ignoreEvents') return;
           var _this2$props2 = _this2.props,
             range = _this2$props2.range,
             rtl = _this2$props2.rtl;

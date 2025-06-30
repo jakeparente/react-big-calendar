@@ -111,8 +111,6 @@ class BackgroundCells extends React.Component {
     }
 
     selector.on('selecting', (box) => {
-      console.log({ '[BackgroundCells] selecting event': { box } })
-      if (this.props.selectable !== 'ignoreEvents') return
       let { range, rtl } = this.props
 
       let startIdx = -1
