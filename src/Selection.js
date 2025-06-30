@@ -427,7 +427,7 @@ class Selection {
       _initialEventData: this._initialEventData,
     })
 
-    if (inRoot) {
+    if (!selecting && inRoot) {
       console.log(
         '[Selection] _handleTerminatingEvent: calling _handleClickEvent',
         { e }
