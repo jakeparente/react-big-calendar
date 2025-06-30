@@ -1204,7 +1204,7 @@ var Selection = /*#__PURE__*/function () {
         _initialEvent: this._initialEvent,
         _initialEventData: this._initialEventData
       });
-      if (!selecting && inRoot) {
+      if (inRoot) {
         console.log('[Selection] _handleTerminatingEvent: calling _handleClickEvent', {
           e: e
         });
