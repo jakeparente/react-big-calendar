@@ -3,6 +3,7 @@ import React from 'react'
 
 import { navigate } from './utils/constants'
 import { DayLayoutAlgorithmPropType } from './utils/propTypes'
+import * as dates from './utils/dates'
 
 import TimeGrid from './TimeGrid'
 
@@ -22,7 +23,10 @@ class Week extends React.Component {
       enableAutoScroll = true,
       ...props
     } = this.props
-    let range = Week.range(date, this.props)
+    let range = Week.range(date, {
+      ...this.props,
+      workdaysOnly: this.props.workdaysOnly,
+    })
 
     return (
       <TimeGrid
@@ -34,6 +38,7 @@ class Week extends React.Component {
         max={max}
         scrollToTime={scrollToTime}
         enableAutoScroll={enableAutoScroll}
+        workdaysOnly={this.props.workdaysOnly}
       />
     )
   }
@@ -115,12 +120,15 @@ Week.navigate = (date, action, { localizer }) => {
   }
 }
 
-Week.range = (date, { localizer }) => {
+Week.range = (date, { localizer, workdaysOnly }) => {
   let firstOfWeek = localizer.startOfWeek()
   let start = localizer.startOf(date, 'week', firstOfWeek)
   let end = localizer.endOf(date, 'week', firstOfWeek)
-
-  return localizer.range(start, end)
+  let range = localizer.range(start, end)
+  if (workdaysOnly) {
+    range = range.filter(dates.isWorkDay)
+  }
+  return range
 }
 
 Week.title = (date, { localizer }) => {

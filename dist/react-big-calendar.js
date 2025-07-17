@@ -43358,7 +43358,9 @@
           _this$props$enableAut = _this$props.enableAutoScroll,
           enableAutoScroll = _this$props$enableAut === void 0 ? true : _this$props$enableAut,
           props = _objectWithoutProperties(_this$props, _excluded$3);
-        var range = Week.range(date, this.props);
+        var range = Week.range(date, _objectSpread2(_objectSpread2({}, this.props), {}, {
+          workdaysOnly: this.props.workdaysOnly
+        }));
         return /*#__PURE__*/React.createElement(TimeGrid, Object.assign({}, props, {
           range: range,
           eventOffset: 15,
@@ -43366,7 +43368,8 @@
           min: min,
           max: max,
           scrollToTime: scrollToTime,
-          enableAutoScroll: enableAutoScroll
+          enableAutoScroll: enableAutoScroll,
+          workdaysOnly: this.props.workdaysOnly
         }));
       }
     }]);
@@ -43384,11 +43387,16 @@
     }
   };
   Week.range = function (date, _ref2) {
-    var localizer = _ref2.localizer;
+    var localizer = _ref2.localizer,
+      workdaysOnly = _ref2.workdaysOnly;
     var firstOfWeek = localizer.startOfWeek();
     var start = localizer.startOf(date, 'week', firstOfWeek);
     var end = localizer.endOf(date, 'week', firstOfWeek);
-    return localizer.range(start, end);
+    var range = localizer.range(start, end);
+    if (workdaysOnly) {
+      range = range.filter(isWorkDay);
+    }
+    return range;
   };
   Week.title = function (date, _ref3) {
     var localizer = _ref3.localizer;
