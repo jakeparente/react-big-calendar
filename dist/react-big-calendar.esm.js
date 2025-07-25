@@ -2890,8 +2890,11 @@ function noOverlap (_ref) {
     var e = styledEvents[_i8];
     // If this is an unavailable event, don't assign idx/size based on overlap logic
     if (e.event && e.event.eventType && e.event.eventType === '_unavailable_') {
-      // Render as normal, but don't set left/width/xOffset based on overlap
-      // You may want to set default width/left here if needed
+      // Set default position and width for unavailable events
+      e.style.left = 0;
+      e.style.width = '100%';
+      e.style.xOffset = '0';
+      // Optionally, adjust height if needed
       continue;
     }
     e.style.left = e.idx * e.size;
