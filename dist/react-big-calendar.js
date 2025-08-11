@@ -42798,9 +42798,10 @@
       if (idx) return null; // don't return the first (0) idx
 
       var isNow = slotMetrics.dateIsInGroup(getNow(), idx);
+      console.log(localizer.format(value, 'timeGutterFormat'));
       return /*#__PURE__*/React.createElement("span", {
         className: clsx('rbc-label', isNow && 'rbc-now')
-      }, localizer.format(value, 'timeGutterFormat'));
+      }, "here");
     }, [slotMetrics, localizer, getNow]);
     return /*#__PURE__*/React.createElement(TimeGutterWrapper, {
       slotMetrics: slotMetrics
