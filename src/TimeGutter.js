@@ -72,11 +72,16 @@ const TimeGutter = ({
       if (idx) return null // don't return the first (0) idx
 
       const isNow = slotMetrics.dateIsInGroup(getNow(), idx)
-      console.log(localizer.format(value, 'timeGutterFormat'))
+      const formattedTime = localizer.format(value, 'timeGutterFormat')
+      // Split formatted time into hour and am/pm
+      const match = formattedTime.match(/^(\d+)(am|pm)$/i)
+      const hour = match ? match[1] : formattedTime
+      const period = match ? match[2] : ''
+
       return (
         <span className={clsx('rbc-label', isNow && 'rbc-now')}>
-          {/* {localizer.format(value, 'timeGutterFormat')} */}
-          here
+          <span className="rbc-timeslot-hour">{hour}</span>
+          <span className="rbc-timeslot-period">{period}</span>
         </span>
       )
     },
