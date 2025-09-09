@@ -2915,6 +2915,15 @@ function noOverlap (_ref) {
     e.style.height = "calc(".concat(e.style.height, "% - 2px)");
     e.style.xOffset = "calc(".concat(e.style.left, "% + ").concat(padding, "px)");
   }
+
+  // Sort so that all _unavailable_ events come first, then all others
+  styledEvents.sort(function (a, b) {
+    var aUnavailable = a.event && a.event.eventType === '_unavailable_';
+    var bUnavailable = b.event && b.event.eventType === '_unavailable_';
+    if (aUnavailable && !bUnavailable) return -1;
+    if (!aUnavailable && bUnavailable) return 1;
+    return 0;
+  });
   return styledEvents;
 }
 

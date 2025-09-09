@@ -125,5 +125,13 @@ export default function ({
     e.style.xOffset = `calc(${e.style.left}% + ${padding}px)`
   }
 
+  // Sort so that all _unavailable_ events come first, then all others
+  styledEvents.sort((a, b) => {
+    const aUnavailable = a.event && a.event.eventType === '_unavailable_'
+    const bUnavailable = b.event && b.event.eventType === '_unavailable_'
+    if (aUnavailable && !bUnavailable) return -1
+    if (!aUnavailable && bUnavailable) return 1
+    return 0
+  })
   return styledEvents
 }
